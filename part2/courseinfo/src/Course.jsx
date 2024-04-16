@@ -26,15 +26,16 @@ const Content = ({ parts }) => (
 );
 
 const Course = ({ course }) => {
-  const totalExercises = course.parts.reduce((total, part) => total + part.exercises, 0);
-
-  return (
-    <div>
-      <Header course={course.name} />
-      <Content parts={course.parts} />
-      <p>Total number of exercises: {totalExercises}</p>
-    </div>
-  );
-};
+    const totalExercises = course.parts.reduce((total, part) => total + part.exercises, 0);
+  
+    return (
+      <div>
+        <Header course={course.name} />
+        <Content parts={course.parts} />
+        <h1>Total number of exercises: {totalExercises}</h1>
+      </div>
+    );
+  };
+  
 
 export default Course;
