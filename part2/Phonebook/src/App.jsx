@@ -32,6 +32,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   useEffect(() => {
     console.log('effect')
@@ -61,65 +62,64 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-
+  
     const nameExists = persons.find(person => person.name === newName);
-    
-
+  
     if (nameExists) {
       const confirmUpdate = window.confirm( `${newName} is already added to the phonebook, replace the old number with a new one?`);
-      alert(`${newName} is already added to the phonebook`);
       if (confirmUpdate) {
+        const existingPerson = persons.find(person => person.name === newName);
         const updatedPerson = { ...existingPerson, number: newNumber };
-      personService
-        .update(existingPerson.id, updatedPerson)
-        .then(returnedPerson => {
-          setPersons(persons.map(person =>
-            person.id !== returnedPerson.id ? person : returnedPerson
-          ));
-          setNewName('');
-          setNewNumber('');
-          setErrorMessage(`Updated ${returnedPerson.name}`);
-          setTimeout(() => {
-            setErrorMessage(null);
-          }, 5000);
-        })
-        .catch(error => {
-          console.error('Error updating person:', error);
-          setErrorMessage(`Information of ${existingPerson.name} has already been removed from the server`);
-          setTimeout(() => {
-            setErrorMessage(null);
-          }, 5000);
-        });
-    }
+        
+        personService
+          .update(existingPerson.id, updatedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(person =>
+              person.id !== returnedPerson.id ? person : returnedPerson
+            ));
+            setNewName('');
+            setNewNumber('');
+            setSuccessMessage(`Updated ${returnedPerson.name}'s number`);
+            setTimeout(() => {
+              setSuccessMessage(null);
+            }, 5000);
+          })
+          .catch(error => {
+            console.error('Error updating person:', error);
+            setErrorMessage(`Failed to update ${existingPerson.name}'s number. Please try again.`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+          });
+      }
       return;
     }
-
+  
     const personObject = {
       name: newName,
       number: newNumber,
-      
     };
+  
     personService
-    .create(personObject)
-    .then(returnedPerson => {
-      setPersons(persons.concat(returnedPerson));
-      setNewName('');
-      setNewNumber('');
-      setErrorMessage(`Added ${returnedPerson.name}`);
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
-    })
-    .catch(error => {
-      console.error('Error adding person:', error);
-      setErrorMessage('Error adding person. Please try again.');
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
-    });
-      
-    
+      .create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName('');
+        setNewNumber('');
+        setSuccessMessage(`Added ${returnedPerson.name}`);
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
+      })
+      .catch(error => {
+        console.error('Error adding person:', error);
+        setErrorMessage('Failed to add person. Please try again.');
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+      });
   };
+  
 
   return (
     <div>
@@ -139,7 +139,7 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      
+
       <Persons persons={persons} searchTerm={searchTerm} />
     </div>
   );
