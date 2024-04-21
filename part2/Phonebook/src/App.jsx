@@ -1,5 +1,6 @@
 import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
+import personService from './services/persons';
 
 const Filter = ({ searchTerm, handleSearchChange }) => {
   return (
@@ -46,10 +47,16 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   useEffect(() => {
     console.log('effect')
-    axios
-    .get('http://localhost:3001/persons')
-    .then(response => { setPersons(response.data) 
-      console.log('promise fulfilled')})
+    personService.getAll()
+    .then(initialPersons => {
+      setPersons(initialPersons)
+      console.log('promise fulfilled')
+    })
+    .catch(error => {
+      console.log('failed to fetch data')
+    })
+      
+      
   }, [])
 
   const handleNameChange = (event) => {
@@ -77,12 +84,17 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1
+      
     };
-
-    setPersons(persons.concat(personObject));
-    setNewName('');
-    setNewNumber('');
+    personService
+      .create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName('');
+        setNewNumber('');
+      });
+      
+    
   };
 
   return (
