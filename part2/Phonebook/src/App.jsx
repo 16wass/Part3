@@ -1,7 +1,7 @@
 import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
-import Persons from './Persons.jsx';
-
+import Persons from './components/Persons.jsx';
+import Notification from './components/Notification.jsx';
 import personService from './services/persons';
 
 const Filter = ({ searchTerm, handleSearchChange }) => {
@@ -32,6 +32,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [errorMessage, setErrorMessage] = useState(null);
   useEffect(() => {
     console.log('effect')
     personService.getAll()
@@ -77,9 +78,17 @@ const App = () => {
           ));
           setNewName('');
           setNewNumber('');
+          setErrorMessage(`Updated ${returnedPerson.name}`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
         })
         .catch(error => {
           console.error('Error updating person:', error);
+          setErrorMessage(`Information of ${existingPerson.name} has already been removed from the server`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
         });
     }
       return;
@@ -91,12 +100,23 @@ const App = () => {
       
     };
     personService
-      .create(personObject)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson));
-        setNewName('');
-        setNewNumber('');
-      });
+    .create(personObject)
+    .then(returnedPerson => {
+      setPersons(persons.concat(returnedPerson));
+      setNewName('');
+      setNewNumber('');
+      setErrorMessage(`Added ${returnedPerson.name}`);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    })
+    .catch(error => {
+      console.error('Error adding person:', error);
+      setErrorMessage('Error adding person. Please try again.');
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    });
       
     
   };
@@ -104,6 +124,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
+
 
       <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
 
@@ -117,6 +139,7 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
+      
       <Persons persons={persons} searchTerm={searchTerm} />
     </div>
   );

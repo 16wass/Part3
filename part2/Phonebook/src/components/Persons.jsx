@@ -1,5 +1,5 @@
 import React from 'react';
-import personService from './services/persons';
+import personService from '../services/persons';
 
 const Persons = ({ persons, searchTerm, setPersons }) => {
   const filteredPersons = persons.filter(person =>
