@@ -1,5 +1,7 @@
 import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
+import Persons from './Persons.jsx';
+
 import personService from './services/persons';
 
 const Filter = ({ searchTerm, handleSearchChange }) => {
@@ -25,21 +27,6 @@ const PersonForm = ({ newName, newNumber, handleNameChange, handleNumberChange, 
     </form>
   );
 };
-
-const Persons = ({ persons, searchTerm }) => {
-  const filteredPersons = persons.filter(person =>
-    person.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  return (
-    <ul>
-      {filteredPersons.map(person => (
-        <li key={person.id}>{person.name} {person.number}</li>
-      ))}
-    </ul>
-  );
-};
-
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
@@ -74,10 +61,27 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault();
 
-    const nameExists = persons.some(person => person.name === newName);
+    const nameExists = persons.find(person => person.name === newName);
+    
 
     if (nameExists) {
+      const confirmUpdate = window.confirm( `${newName} is already added to the phonebook, replace the old number with a new one?`);
       alert(`${newName} is already added to the phonebook`);
+      if (confirmUpdate) {
+        const updatedPerson = { ...existingPerson, number: newNumber };
+      personService
+        .update(existingPerson.id, updatedPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(person =>
+            person.id !== returnedPerson.id ? person : returnedPerson
+          ));
+          setNewName('');
+          setNewNumber('');
+        })
+        .catch(error => {
+          console.error('Error updating person:', error);
+        });
+    }
       return;
     }
 
