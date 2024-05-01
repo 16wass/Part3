@@ -33,6 +33,17 @@ app.get('/api/persons', (req, res) => {
     res.json(phonebookEntries);
 });
 
+//Route for getting the info of the phonebook
+app.get('/info', (req, res) => {
+    /**
+     * GET request handler for retrieving the info of the phonebook.
+     * @param {Object} req - The request object.
+     * @param {Object} res - The response object.
+     */
+    const date = new Date();
+    res.send(`<p>Phonebook has info for ${phonebookEntries.length} people</p><p>${date}</p>`);
+});
+
 
 const port = 3001;
 app.listen(port, () => {
