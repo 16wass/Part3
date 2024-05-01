@@ -24,14 +24,25 @@ const phonebookEntries = [
         }
 ];
 
+// Route for /api/persons
 app.get('/api/persons', (req, res) => {
-    /**
-     * GET request handler for retrieving all phonebook entries.
-     * @param {Object} req - The request object.
-     * @param {Object} res - The response object.
-     */
     res.json(phonebookEntries);
 });
+app.get('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id);
+    const entry = phonebookEntries.find(entry => entry.id === id);
+    if (entry) {
+        res.json(entry);
+    } else {
+        res.status(404).end();
+    }
+}
+);
+
+
+
+
+
 
 //Route for getting the info of the phonebook
 app.get('/info', (req, res) => {
