@@ -38,10 +38,27 @@ app.get('/api/persons/:id', (req, res) => {
     }
 }
 );
+app.delete('/api/persons/:id',(req,res)=>{
+    const id = Number(req.params.id);
+    phonebookEntries = phonebookEntries.filter(entry => entry.id !== id);
+    res.status(204).end();
+}
+)
 
-
-
-
+app.post('/api/persons', (req, res) => {
+    const body = req.body;
+    if (!body.name || !body.number) {
+        return res.status(400).json({ error: 'content missing' });
+    }
+    const entry ={
+        id: Math.floor(Math.random() * 1000),
+        name: body.name,
+        number: body.number
+    }
+    phonebookEntries = phonebookEntries.concat(entry);
+    res.json(entry);
+}
+);
 
 
 //Route for getting the info of the phonebook
