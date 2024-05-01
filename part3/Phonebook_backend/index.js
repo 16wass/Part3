@@ -1,5 +1,10 @@
 const express = require('express');
+const morgan = require('morgan');
 const app = express();
+
+app.use(morgan('tiny'));
+app.use(express.json());
+
 
 const phonebookEntries = [
         { 
@@ -54,7 +59,7 @@ app.post('/api/persons', (req, res) => {
         return res.status(400).json({ error: 'name must be unique' });
     }
     const entry ={
-        id: Math.floor(Math.random() * 1000),
+        id: Math.floor(Math.random() * 1000)+1 ,
         name: body.name,
         number: body.number
     }
