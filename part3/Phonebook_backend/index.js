@@ -1,6 +1,10 @@
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
+
 const app = express();
+
+app.use(cors());
 
 /**app.use(morgan('tiny'));*/
 
@@ -91,7 +95,7 @@ app.get('/info', (req, res) => {
 });
 
 
-const port = 3001;
+const PORT = process.env.PORT || 3001
 app.listen(port, () => {
     /**
      * Starts the server and listens on the specified port.
