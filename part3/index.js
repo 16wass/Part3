@@ -96,7 +96,7 @@ app.get('/info', (req, res) => {
 
 
 const PORT = process.env.PORT || 3001
-app.listen(port, () => {
+app.listen(PORT, () => {
     /**
      * Starts the server and listens on the specified port.
      * @param {number} port - The port number to listen on.
