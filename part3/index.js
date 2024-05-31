@@ -99,7 +99,7 @@ const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     /**
      * Starts the server and listens on the specified port.
-     * @param {number} port - The port number to listen on.
+     * @param {number} PORT - The port number to listen on.
      */
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port ${PORT}`);
 });
